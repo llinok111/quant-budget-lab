@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>quant-budget-lab — per-primitive vertex quantization under a byte budget</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { --bg:#0e1116; --fg:#e6edf3; --dim:#8b949e; --acc:#58a6ff; --warn:#f0883e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; overflow:hidden; }
+  #app { display:flex; height:100vh; }
+  #view { flex:1; position:relative; }
+  canvas { display:block; }
+  #panel { width:360px; padding:14px 16px; overflow-y:auto; border-left:1px solid #21262d; background:#0b0f14; }
+  h1 { font-size:14px; margin:0 0 4px; letter-spacing:.02em; }
+  h2 { font-size:11px; text-transform:uppercase; color:var(--dim); margin:18px 0 6px; letter-spacing:.08em; }
+  .sub { color:var(--dim); font-size:11px; margin-bottom:10px; }
+  label { display:flex; justify-content:space-between; font-size:11px; color:var(--dim); margin:8px 0 2px; }
+  input[type=range] { width:100%; accent-color:var(--acc); }
+  .row { display:flex; gap:6px; margin-top:6px; }
+  button { flex:1; background:#161b22; color:var(--fg); border:1px solid #30363d; border-radius:5px; padding:5px 6px; font:inherit; font-size:11px; cursor:pointer; }
+  button.on { border-color:var(--acc); color:var(--acc); }
+  table { width:100%; border-collapse:collapse; font-size:11px; }
+  td { padding:2px 0; } td:last-child { text-align:right; }
+  .big { font-size:19px; color:var(--acc); }
+  .muted { color:var(--dim); }
+  #err { color:var(--warn); font-size:11px; white-space:pre-wrap; }
+  #legend { display:flex; height:6px; margin:4px 0 2px; border-radius:3px; overflow:hidden; }
+  #legend div { flex:1; }
+  a { color:var(--acc); }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app">
+  <div id="view"></div>
+  <aside id="panel">
+    <h1>quant-budget-lab</h1>
+    <div class="sub">24 primitives · 4,782 vertices · per-primitive vertex grids under one byte budget. Every number below is computed by <code>src/core.mjs</code> in this browser tab.</div>
+
+    <h2>byte budget</h2>
+    <label><span>positions payload</span><span id="budgetLabel">24.0 KiB</span></label>
+    <input id="budget" type="range" min="8" max="57" step="1" value="24">
+    <div class="row">
+      <button id="m-budgeted" class="on">budgeted</button>
+      <button id="m-uniform">uniform bits</button>
+      <button id="m-global">one world grid</button>
+    </div>
+
+    <h2>certified plan</h2>
+    <table>
+      <tr><td>bytes used</td><td id="s-bytes">–</td></tr>
+      <tr><td>max vertex error bound</td><td id="s-bound">–</td></tr>
+      <tr><td>of world diagonal</td><td id="s-rel">–</td></tr>
+      <tr><td>max sampled surface err</td><td id="s-surf">–</td></tr>
+      <tr><td>plan sha256</td><td id="s-sha" style="font-size:10px">–</td></tr>
+    </table>
+    <div id="err"></div>
+
+    <h2>bits per primitive</h2>
+    <div id="legend"></div>
+    <div class="muted" style="font-size:10px">colour = bits (8 → 16). Fat primitives get bits; tiny ones need few. Hover picks a primitive.</div>
+    <table id="bits"></table>
+
+    <h2>what this proves</h2>
+    <div class="sub" style="font-size:11px;line-height:1.5">
+      Each primitive owns its grid, so <b>max error is minimized for the whole byte budget</b> instead of being fixed by the largest part.
+      The claim is a bound, not a hope: sampled surface error (point→original-triangle, a separate oracle) must stay under it.
+      Node replays the identical plan: <code>node bench/verify.mjs</code>.
+    </div>
+  </aside>
+</div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

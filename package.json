@@ -1,0 +1,14 @@
+{
+  "name": "quant-budget-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Per-primitive vertex-grid quantization under a shared byte budget, with a proven minimax allocation",
+  "scripts": {
+    "gen": "node tools/gen-sample.mjs",
+    "verify": "node tools/gen-sample.mjs && node bench/verify.mjs",
+    "bench": "node bench/bench.mjs",
+    "serve": "python3 -m http.server 4173"
+  },
+  "license": "MIT"
+}
