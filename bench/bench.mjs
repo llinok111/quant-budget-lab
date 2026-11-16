@@ -1,5 +1,5 @@
 // Timing harness: payload planning = per-primitive quantize + exact-bit pack.
-// cold = very first call, then 1 warmup + 7 measured runs.
+// cold = very first call (excluded from median), then 3 warmup + 9 measured runs.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import * as core from '../src/core.mjs';
